@@ -1,0 +1,32 @@
+h1. ffmpeginstall-ubuntu
+
+this sctipt downloads and install ffmpeg and x264 from git for the initial install
+
+Moved to github for simpler tracking/updating/etc
+https://github.com/zeroasterisk/ffmpeginstall-ubuntu
+
+h2. History
+
+script taken from the primary install script:
+http://code.google.com/p/x264-ffmpeg-up-to-date/
+
+which was taken from the excellent tutorial found here:
+http://ubuntuforums.org/showthread.php?t=786095
+
+"all props to fakeoutdoorsman"
+
+h2. Usage
+
+Just download the script:
+
+<pre><code># wget https://raw.github.com/zeroasterisk/ffmpeginstall-ubuntu/master/ffmpeginstall-ubuntu.sh</code></pre>
+or
+<pre><code># git clone git://github.com/zeroasterisk/ffmpeginstall-ubuntu.git; cd ffmpeginstall-ubuntu</code></pre>
+
+And then become root and use it:
+
+<pre><code># sudo bash ffmpeginstall-ubuntu.sh</code></pre>
+
+h3. Issues / Bugs?
+
+If you find issues/bugs, please fork the project, fix them, and submit a pull request.  I'm not equipped to test on multiple versions of ubuntu... though this should be woking fine on both maverick and natty, probably lucid as well. 
