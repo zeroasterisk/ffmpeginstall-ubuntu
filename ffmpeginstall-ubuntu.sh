@@ -12,7 +12,7 @@
 #    http://code.google.com/p/x264-ffmpeg-up-to-date/
 #  which was taken from the excellent tutorial found here:
 #    http://ubuntuforums.org/showthread.php?t=786095
-#      "all props to fakeoutdoorsman" 
+#      "all props to fakeoutdoorsman"
 #
 
 INSTALL="/usr/local/src"
@@ -21,6 +21,22 @@ LOG="/var/log/ffmpeginstall-ubuntu.log"
 # location of the script's lock file
 LOCK="/var/run/ffmpeginstall-ubuntu.pid"
 SCRIPT="ffmpeginstall-ubuntu.sh"
+
+#oneiric install
+oneiric_dep () {
+apt-get -y remove ffmpeg x264 libx264-dev  libvpx0 libvpx-dev 2>> $LOG >> $LOG
+apt-get -y update 2>> $LOG >> $LOG
+apt-get -y install build-essential checkinstall git libfaac-dev libjack-jackd2-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libtheora-dev libva-dev libvdpau-dev libvorbis-dev libx11-dev libxfixes-dev libxvidcore-dev texi2html yasm zlib1g-dev 2>> $LOG >> $LOG
+}
+oneiric_x264 () {
+generic_install_x264
+}
+oneiric_libvpx () {
+generic_install_libvpx
+}
+oneiric_ffmpeg () {
+generic_install_ffmpeg
+}
 
 
 #natty install
@@ -31,47 +47,14 @@ apt-get -y update 2>> $LOG >> $LOG
 apt-get -y install build-essential checkinstall git libfaac-dev libjack-jackd2-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libtheora-dev libva-dev libvdpau-dev libvorbis-dev libx11-dev libxfixes-dev libxvidcore-dev texi2html yasm zlib1g-dev 2>> $LOG >> $LOG
 }
 
-natty_x264 ()
-{
-cd $INSTALL
-rm -rf x264
-git clone git://git.videolan.org/x264.git 2>> $LOG >> $LOG
-cd x264
-./configure --enable-shared  --enable-static 2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-x264v=$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')
-sudo checkinstall --pkgname=x264 --pkgversion="3:$x264v" --backup=no --deldoc=yes --fstrans=no --default 2>> $LOG >> $LOG
-sudo ldconfig
+natty_x264 () {
+generic_install_x264
 }
-
-natty_libvpx ()
-{
-cd $INSTALL
-rm -rf libvpx
-git clone git://review.webmproject.org/libvpx  2>> $LOG >> $LOG
-cd libvpx
-./configure  2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-sudo checkinstall --pkgname=libvpx --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no --default --deldoc=yes  2>> $LOG >> $LOG
-sudo ldconfig
+natty_libvpx () {
+generic_install_libvpx
 }
-
-natty_ffmpeg ()
-{
-cd $INSTALL
-rm -rf ffmpeg
-git clone git://git.videolan.org/ffmpeg 2>> $LOG >> $LOG
-cd ffmpeg
-./configure --enable-gpl --enable-version3 --enable-nonfree --enable-postproc --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxvid --enable-x11grab 2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-sudo checkinstall --pkgname=ffmpeg --pkgversion="5:$(./version.sh)" --backup=no --deldoc=yes --fstrans=no --default 2>> $LOG >> $LOG
-hash x264 ffmpeg ffplay ffplay 2>> $LOG >> $LOG
-ldconfig
-
-make tools/qt-faststart
-sudo checkinstall --pkgname=qt-faststart --pkgversion="$(./version.sh)" --backup=no \
-    --deldoc=yes --default install -D -m755 tools/qt-faststart /usr/local/bin/qt-faststart
-
+natty_ffmpeg () {
+generic_install_ffmpeg
 }
 
 #maverick install
@@ -82,47 +65,14 @@ apt-get -y update 2>> $LOG >> $LOG
 apt-get -y install build-essential git-core checkinstall yasm texi2html libfaac-dev libjack-jackd2-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libsdl1.2-dev libtheora-dev libva-dev libvdpau-dev libvorbis-dev libx11-dev libxfixes-dev libxvidcore-dev zlib1g-dev 2>> $LOG >> $LOG
 }
 
-maverick_x264 ()
-{
-cd $INSTALL
-rm -rf x264
-git clone git://git.videolan.org/x264.git 2>> $LOG >> $LOG
-cd x264
-./configure --enable-shared  --enable-static 2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-x264v=$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')
-sudo checkinstall --pkgname=x264 --pkgversion="3:$x264v" --backup=no --deldoc=yes --fstrans=no --default 2>> $LOG >> $LOG
-sudo ldconfig
+maverick_x264 () {
+generic_install_x264
 }
-
-maverick_libvpx ()
-{
-cd $INSTALL
-rm -rf libvpx
-git clone git://review.webmproject.org/libvpx  2>> $LOG >> $LOG
-cd libvpx
-./configure  2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-sudo checkinstall --pkgname=libvpx --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no --default --deldoc=yes  2>> $LOG >> $LOG
-sudo ldconfig
+maverick_libvpx () {
+generic_install_libvpx
 }
-
-maverick_ffmpeg ()
-{
-cd $INSTALL
-rm -rf ffmpeg
-git clone git://git.videolan.org/ffmpeg 2>> $LOG >> $LOG
-cd ffmpeg
-./configure --enable-gpl --enable-version3 --enable-nonfree --enable-postproc --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxvid --enable-x11grab 2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-sudo checkinstall --pkgname=ffmpeg --pkgversion="5:$(./version.sh)" --backup=no --deldoc=yes --fstrans=no --default 2>> $LOG >> $LOG
-hash x264 ffmpeg ffplay ffplay 2>> $LOG >> $LOG
-ldconfig
-
-make tools/qt-faststart
-sudo checkinstall --pkgname=qt-faststart --pkgversion="$(./version.sh)" --backup=no \
-    --deldoc=yes --default install -D -m755 tools/qt-faststart /usr/local/bin/qt-faststart
-
+maverick_ffmpeg () {
+generic_install_ffmpeg
 }
 
 #lucid install
@@ -143,46 +93,61 @@ make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
 checkinstall --pkgname=lame-ffmpeg --pkgversion="3.98.4" --backup=no --default --deldoc=yes 2>> $LOG >> $LOG
 }
 
-lucid_x264 ()
+lucid_x264 () {
+generic_install_x264
+}
+lucid_libvpx () {
+generic_install_libvpx
+}
+lucid_ffmpeg () {
+generic_install_ffmpeg
+}
+
+#generic functions
+generic_install_x264 ()
 {
 cd $INSTALL
 git clone git://git.videolan.org/x264.git 2>> $LOG >> $LOG
 cd x264
-./configure 2>> $LOG >> $LOG
+./configure --enable-static 2>> $LOG >> $LOG
 make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
 X264V=$(./version.sh | awk -F'[" ]" /POINT/{print $4"+git"$5}')
-checkinstall --pkgname=x264 --default --pkgversion="3:$X264V" --backup=no --deldoc=yes 2>> $LOG >> $LOG
+#checkinstall --pkgname=x264 --default --pkgversion="3:$X264V" --backup=no --deldoc=yes 2>> $LOG >> $LOG
+checkinstall --pkgname=x264 --pkgversion="3:$(./version.sh | awk -F'[" ]' '/POINT/{print $4"+git"$5}')" --backup=no --deldoc=yes --fstrans=no --default 2>> $LOG >> $LOG\
 hash x264 2>> $LOG >> $LOG
 }
-
-lucid_libvpx ()
+generic_install_libvpx ()
 {
 cd $INSTALL
 rm -rf libvpx
-git clone git://review.webmproject.org/libvpx  2>> $LOG >> $LOG
+git clone http://git.chromium.org/webm/libvpx.git  2>> $LOG >> $LOG
 cd libvpx
 ./configure  2>> $LOG >> $LOG
-make clean && make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-sudo checkinstall --pkgname=libvpx --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no --default --deldoc=yes  2>> $LOG >> $LOG
-sudo ldconfig
+make clean 2>> $LOG >> $LOG
+make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
+checkinstall --pkgname=libvpx --pkgversion="$(date +%Y%m%d%H%M)-git" --backup=no --default --deldoc=yes  2>> $LOG >> $LOG
+ldconfig 2>> $LOG >> $LOG
 }
-
-lucid_ffmpeg ()
+generic_install_ffmpeg ()
 {
 cd $INSTALL
+rm -rf ffmpeg
 git clone git://git.videolan.org/ffmpeg 2>> $LOG >> $LOG
 cd ffmpeg
-./configure --enable-gpl --enable-version3 --enable-nonfree --enable-postproc --enable-libfaac --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libx264 --enable-libxvid --enable-x11grab --enable-libvpx --enable-libmp3lame 2>> $LOG >> $LOG
+./configure --enable-gpl --enable-version3 --enable-nonfree --enable-postproc --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libxvid --enable-x11grab 2>> $LOG >> $LOG
+make clean 2>> $LOG >> $LOG
 make -j $NO_OF_CPUCORES 2>> $LOG >> $LOG
-checkinstall --pkgname=ffmpeg --pkgversion="5:$(./version.sh)" --backup=no --deldoc=yes --default 2>> $LOG >> $LOG
+#checkinstall --pkgname=ffmpeg --pkgversion="5:$(./version.sh)" --backup=no --deldoc=yes --fstrans=no --default 2>> $LOG >> $LOG
+checkinstall --pkgname=ffmpeg --pkgversion="5:$(date +%Y%m%d%H%M)-git" --backup=no --deldoc=yes --fstrans=no --default  2>> $LOG >> $LOG
 hash x264 ffmpeg ffplay ffprobe 2>> $LOG >> $LOG
+ldconfig
+#make tools/qt-faststart
+#checkinstall --pkgname=qt-faststart --pkgversion="$(./version.sh)" --backup=no --deldoc=yes --default install -D -m755 tools/qt-faststart /usr/local/bin/qt-faststart
 }
-
-
 #exit function
 die ()
 {
-	echo $@ 
+	echo $@
 	killall $SCRIPT
 	exit 1
 }
@@ -191,7 +156,7 @@ die ()
 error ()
 {
 	kill "$PID" &>/dev/null 2>> $LOG >> $LOG
-	
+
 	echo $1
 	echo $@
 	killall $SCRIPT
@@ -227,7 +192,7 @@ echo
 
 #next, lets find out what version of Ubuntu we are running and check it
 DISTRO=( $(cat /etc/lsb-release | grep CODE | cut -c 18-) )
-OKDISTRO="hardy karmic lucid maverick helena isadora julia natty"
+OKDISTRO="hardy karmic lucid maverick helena isadora julia natty oneiric"
 
 if [[ ! $(grep $DISTRO <<< $OKDISTRO) ]]; then
   die "exiting. Your distro is not supported, sorry.";
@@ -281,6 +246,8 @@ while ps |grep $PID &>/dev/null; do
 	sleep 1
 done
 
+
+
 echo -e "\bDone"
 echo
 echo "downlading, building and installing x264"
@@ -299,6 +266,12 @@ while ps |grep $PID &>/dev/null; do
 	echo -en "\b/"
 	sleep 1
 done
+
+#verify
+if [ ! -f /usr/local/lib/libx264.so ];
+then
+    die "exiting. Sorry, unable to find /usr/local/lib/libx264.so (it should have just been installed)";
+fi
 
 echo -e "\bDone"
 echo
@@ -319,6 +292,12 @@ while ps |grep $PID &>/dev/null; do
 	sleep 1
 done
 
+#verify
+if [ ! -f /usr/local/lib/libvpx.a ];
+then
+    die "exiting. Sorry, unable to find /usr/local/lib/libvpx.a (it should have just been installed)";
+fi
+
 echo -e "\bDone"
 echo
 echo "downloading, building and installing FFmpeg"
@@ -338,6 +317,12 @@ while ps |grep $PID &>/dev/null; do
 	sleep 1
 done
 
+#verify
+if [ ! -f /usr/local/bin/ffmpeg ];
+then
+    die "exiting. Sorry, unable to find /usr/local/bin/ffmpeg (it should have just been installed)";
+fi
+
 echo -e "\bDone"
 echo
 echo "That's it, all done."
@@ -345,4 +330,4 @@ echo "Take a look at the install log, for full details of what was done"
 echo "  less $LOG"
 echo "exiting now, bye."
 echo "You may re-run this script anytime to remove/install ffmpegup to the latest"
-exit 
+exit
